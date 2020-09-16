@@ -1,0 +1,49 @@
+{% assign vendor_handle = product.vendor | handleize %}
+      
+        {% assign section_title = " " | split: ','%}
+
+      {% for product in collections[vendor_handle].products %}
+         {% assign productTags = product.tags | join: ','  %}
+      <p>{{ productTags }}</p>
+                 {% for tag in productTags %}
+				{% if tag contains '/' %}
+                  {% assign split_tag = tag | split: '/'  %}
+                    {% assign section_title = split_tag[0] | concat:section_title | uniq   %}
+						 {% endif %}
+      			 {%- endfor -%}
+        {% endfor %}
+   {% for s in section_title %}
+       <div>
+         <h2 class"page-title">
+           {% assign sa = s | split: "," %}
+           {{ sa.last }}
+         </h2> 
+         
+      	{% unless s == blank %}
+         
+         {% for product in collections[vendor_handle].products %}
+        {% assign productTags = product.tags | join: ',' %}
+   		 {% if productTags contains s %}
+         {% assign ss = productTags | remove: "/ tag" %}
+         {% if s == ss %}
+         
+         <ul class="recommend_ul"style="display:inline-flex; ">   
+       <li class="product product_recommend">
+         <a href="{{ product.url }}">
+           <img
+             class="product__img"
+             src="{{ product.featured_image | img_url: '300x300' }}"
+             alt="{{ product.featured_image.alt }}"
+           />
+             <p class="product__title_recommend">{{ product.title }}</p>
+             <p class="product__price_recommend">{{ product.price | money}}</p>
+           </a>
+         </li>
+        </ul>
+     {% endif %}
+        {% endif %}
+
+         {% endfor %}
+         {% endunless %}
+		</div>
+   {% endfor %}
